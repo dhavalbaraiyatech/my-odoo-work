@@ -1,0 +1,29 @@
+<odoo>
+    <template id="product_matrix_template" inherit_id="website_sale.product">
+        <xpath expr="//div[contains(@t-attf-class, 'o_wsale_product_details_content_section_attributes')]"
+               position="replace">
+            <!-- Condition: Show custom product matrix when 2 or 3 variant attributes -->
+            <t t-if="len(product.valid_product_template_attribute_line_ids) in [2, 3]">
+                <t t-call="ecommerce_products_matrix_ept.variants_matrix">
+                    <t t-set="product" t-value="product"/>
+                    <t t-set="ul_class" t-valuef="flex-column"/>
+                    <t t-set="parent_combination" t-value="None"/>
+                    <t t-set="combination" t-value="combination_info['combination']"/>
+                </t>
+            </t>
+
+            <!-- Otherwise use the base variant selector -->
+            <t t-else="">
+                <div
+                        t-attf-class="o_wsale_product_details_content_section o_wsale_product_details_content_section_attributes mb-4 {{not (product.valid_product_template_attribute_line_ids or product._has_multiple_uoms()) and 'd-none' or ''}}"
+                >
+                    <t t-call="website_sale.variants">
+                        <t t-set="ul_class" t-valuef="flex-column"/>
+                        <t t-set="parent_combination" t-value="None"/>
+                        <t t-set="combination" t-value="combination_info['combination']"/>
+                    </t>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>
