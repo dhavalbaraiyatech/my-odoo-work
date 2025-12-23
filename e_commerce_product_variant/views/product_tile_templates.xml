@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- =========================================================
+         PRODUCT TEMPLATE ITEM (NEW TEMPLATE)
+         ========================================================= -->
+    <template id="e_commerce_product_variant.products_item_template" name="Product Template Tile">
+
+        <!-- product := product.template -->
+        <!-- Added this template to rander a variant -->
+
+        <form
+                class="oe_product_cart h-100 d-flex"
+                t-att-data-publish="product.website_published and 'on' or 'off'"
+                role="article"
+                t-att-aria-label="product.name"
+        >
+            <!-- =================== IMAGE ==================== -->
+            <div class="oe_product_image position-relative flex-grow-0 overflow-hidden">
+                <t
+                        t-set="variant"
+                        t-value="product"
+                />
+                <t
+                        t-if="variant and variant.with_context(bin_size=True).image_128"
+                        t-set="all_images_list"
+                        t-value="variant._get_images()"
+                />
+                <t
+                        t-else=""
+                        t-set="all_images_list"
+                        t-value="variant._get_images()"
+                />
+                <t t-set="primary_image_holder" t-value="(all_images_list[:1] + [product])[0]"/>
+                <t t-set="secondary_image_holder" t-value="(all_images_list[1:2] + [False])[0]"/>
+
+                <a
+
+                        t-att-href="product.product_tmpl_id._get_product_url(category, product_query_params, grouped_attributes_values)"
+                        t-att-title="product.name"
+                        t-attf-class="oe_product_image_link position-relative {{secondary_image_holder and 'oe_product_image_link_has_secondary'}}"
+                >
+
+                    <!-- Primary Image -->
+                    <span
+                            t-field="primary_image_holder.image_1920"
+                            t-options="{
+                        'widget': 'image',
+                        'preview_image': 'image_1024',
+                        'class': 'oe_product_image_img h-100 w-100'
+                    }"
+                            class="oe_product_image_img_wrapper oe_product_image_img_wrapper_primary d-flex h-100 justify-content-center align-items-center"
+                    />
+
+                    <!-- Secondary Image -->
+                    <span
+                            t-if="secondary_image_holder"
+                            t-field="secondary_image_holder.image_1920"
+                            t-options="{
+                        'widget': 'image',
+                        'preview_image': 'image_1024',
+                        'class': 'oe_product_image_img_secondary h-100 w-100'
+                    }"
+                            class="oe_product_image_img_wrapper oe_product_image_img_wrapper_secondary"
+                    />
+                </a>
+            </div>
+
+            <!-- ================= INFORMATION =================== -->
+            <div class="o_wsale_product_information flex-grow-1 flex-shrink-1">
+
+                <div class="o_wsale_product_information_text">
+
+                    <!-- Product Name -->
+                    <h2 class="o_wsale_products_item_title text-break">
+                        <a
+                                class="text-decoration-none"
+                                t-att-href="product.product_tmpl_id._get_product_url(category, product_query_params, grouped_attributes_values)"
+                        >
+                            <span t-field="product.name"/>
+                        </a>
+
+                        <a
+                                t-if="not product.website_published"
+                                role="button"
+                                class="btn btn-sm btn-danger"
+                                t-att-href="product.product_tmpl_id._get_product_url(category, product_query_params, grouped_attributes_values)"
+                        >
+                            Unpublished
+                        </a>
+                    </h2>
+
+                    <!-- Attributes -->
+                    <div class="oe_subdescription_wrapper">
+                        <div class="oe_subdescription text-muted small">
+                            <t t-if="product.product_template_attribute_value_ids">
+                                <span class="badge text-bg-primary">
+                                    <t t-out="product.product_template_attribute_value_ids._get_combination_name()"/>
+                                    <!--                                    <span t-field="product.product_template_attribute_value_ids._get_combination_name()"/>-->
+                                </span>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="oe_subdescription_wrapper">
+                        <div class="oe_subdescription text-muted small">
+                            <div t-field="product.description_sale"/>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ================= PRICE =================== -->
+                <div class="o_wsale_product_sub justify-content-between gap-2">
+
+                    <t t-set="price_vals" t-value="product._get_combination_info_variant().get('price')"/>
+<!--                    <t t-set="price_vals" t-value="get_product_prices(product.product_tmpl_id)"/>-->
+
+                    <div class="product_price">
+                        <span
+                                class="fw-bold"
+                                aria-label="Sale price"
+                                t-out="price_vals"
+                                t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"
+                        />
+<!--                        <t-->
+<!--                                t-if="price_vals['base_price'] > price_vals['price_reduce']"-->
+<!--                        >-->
+<!--                            <del class="text-muted small">-->
+<!--                                <span-->
+<!--                                        t-esc="price_vals['base_price']"-->
+<!--                                        t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"-->
+<!--                                />-->
+<!--                            </del>-->
+<!--                        </t>-->
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <div class="o_wsale_product_btn">
+                        <t name="buttons_container">
+                            <div class="o_wsale_product_action_row">
+                                <t
+                                        t-if="product.product_tmpl_id._website_show_quick_add()"
+                                        t-call="website_sale.product_tile_element_visibility"
+                                >
+                                    <t t-set="visible_element_class" t-value="'o_wsale_products_opt_has_cta'"/>
+                                    <input name="product_id" t-att-value="product.id" type="hidden"/>
+                                    <input name="product_template_id" t-att-value="product.product_tmpl_id.id" type="hidden"/>
+                                    <input name="product_type" t-att-value="product.type" type="hidden"/>
+                                    <!-- type="button" needed as default type in a `form` is "sumbit" -->
+                                    <button
+                                            type="button"
+                                            class="o_wsale_product_btn_primary a-submit btn btn-primary"
+                                            aria-label="Add to cart"
+                                            title="Add to cart"
+                                            t-att-data-show-quantity="is_view_active('website_sale.product_quantity')"
+                                    >
+                                        <i class="fa fa-fw fa-shopping-cart o_not-animable" role="presentation"/>
+                                        <span class="o_label small ms-1">Add to Cart</span>
+                                    </button>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                    <!--                    <div>-->
+                    <!--                        <a-->
+                    <!--                                class="btn btn-primary btn-sm"-->
+                    <!--                                t-att-href="product.product_tmpl_id._get_product_url(category, product_query_params, grouped_attributes_values)"-->
+                    <!--                        >-->
+                    <!--                            View-->
+                    <!--                        </a>-->
+                    <!--                    </div>-->
+
+                </div>
+
+            </div>
+        </form>
+
+    </template>
+</odoo>

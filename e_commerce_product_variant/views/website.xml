@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_website_form_inherit_show_variant" model="ir.ui.view">
+        <field name="name">website.form.show.variant.inherit</field>
+        <field name="model">website</field>
+        <field name="inherit_id" ref="website.view_website_form"/>
+        <field name="arch" type="xml">
+            <!-- Insert the new field after default_lang_id -->
+            <xpath expr="//group[@name='domain']/field[@name='default_lang_id']" position="after">
+                <field name="show_variants_on_shop"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

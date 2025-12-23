@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <template id="products_ept" inherit_id="website_sale.products">
+        <!--======= Inherit this view for handel a variant in shop =======-->
+        <xpath expr="//t[@t-call='website_sale.products_item']" position="replace">
+            <t t-if="show_variants_on_shop">
+                <t t-call="e_commerce_product_variant.products_item_template">
+                    <t t-set="template_price_vals" t-value="0"/>
+                    <t t-set="ribbon" t-value="0"/>
+                    <t t-set="product" t-value="td_product['product']"/>
+                </t>
+            </t>
+            <t t-else="">
+                <t t-set="template_price_vals" t-value="get_product_prices(product)"/>
+                <t
+                        t-set="ribbon"
+                        t-value="product._get_ribbon(
+                                                        price_vals=template_price_vals,
+                                                        auto_assign_ribbons=auto_assign_ribbons,
+                                                        variant=product_variants[product],
+                                                    )"
+                />
+                <t t-call="website_sale.products_item">
+                    <t
+                            t-set="design_field"
+                            t-value="website.shop_opt_products_design_classes"
+                    />
+                    <t
+                            t-set="product_href"
+                            t-value="product._get_product_url(category, product_query_params, grouped_attributes_values)"
+                    />
+                </t>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-set='template_price_vals']" position="replace">
+        </xpath>
+        <xpath expr="//t[@t-set='ribbon']" position="replace">
+        </xpath>
+    </template>
+</odoo>
