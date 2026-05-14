@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- view used for product.product only -->
+        <record model="ir.ui.view" id="product_product_form_view_ept">
+            <field name="name">product.product.ept</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form//field[@name='website_id']" position="after">
+<!--                    <field name="country_ids" widget="many2many_tags"/>-->
+                    <field name="website_ids" widget="many2many_tags"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="variants_matrix" name="Product Variants Matrix">
+        <style>
+            .is-firefox .scroll-wrapper-h {
+            position: relative;
+            overflow: hidden; /* hide native scrollbar */
+            }
+
+            .is-firefox .scroll-content-h {
+            height: 100%;
+            width: 100%;
+            overflow-x: scroll; /* horizontal scroll */
+            overflow-y: hidden;
+            padding-bottom: 20px; /* space for fake scrollbar */
+            white-space: nowrap; /* keep content wide */
+            }
+
+            .is-firefox .scrollbar-track-h {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            width: 100%;
+            background: #f1f1f1;
+            }
+
+            .is-firefox .scrollbar-thumb-h {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            width: 40px; /* adjust dynamically */
+            background: #000;
+            border-radius: 4px;
+            cursor: grab;
+            }
+        </style>
+        <t t-set="matrix_data" t-value="request.env['sale.order'].get_web_matrix(product)"/>
+        <t t-set="grid" t-value="matrix_data"/>
+        <t t-set="attribute_exclusions" t-value="product._get_attribute_exclusions(parent_combination, parent_name)"/>
+
+        <div style="max-width:60rem; max-height:100%; overflow:auto;" class="container_web_matrix">
+            <div class="scroll-wrapper-h">
+                <div class="scroll-content-h">
+                    <!-- When 3 attributes are present, each 3rd attribute value becomes its own section -->
+                    <t t-if="grid.get('attribute_count') == 3">
+
+                        <!--            <h5 class="mt-4 mb-2 text-primary border-bottom pb-2">-->
+                        <!--                <t t-esc="section['third_attr']['name']"/>-->
+                        <!--            </h5>-->
+                        <table class="web_matrix table table-striped table-bordered oe_cart"
+                               style="width: max-content;">
+                            <!--                        <thead>-->
+                            <!--                            <tr>-->
+                            <!--                                <th>-->
+                            <!--                                    <span/>-->
+                            <!--                                </th>-->
+                            <!--                                <t t-foreach="grid['header'][1:]" t-as="column_header">-->
+                            <!--                                    <th class="o_grid_title_header text-center">-->
+                            <!--                                        <span t-esc="column_header['name']"/>-->
+                            <!--                                    </th>-->
+                            <!--                                </t>-->
+                            <!--                            </tr>-->
+                            <!--                        </thead>-->
+                            <thead>
+                                <tr>
+                                    <th t-foreach="grid['header']" t-as="column_header"
+                                        class="o_grid_title_header text-center">
+                                        <span t-esc="column_header['name']"/>
+                                        <div>
+                                            <!-- VARIANT IMAGE (first available in this row) -->
+                                            <t t-if="column_header['name'] != ''">
+                                                <img
+                                                        t-att-src="'/web/image/product.product/%s/image_1920' % column_header['variant_id']"
+                                                        class="rounded border"
+                                                        style="max-height: 70px; max-width: 70px; object-fit: contain;"
+                                                        loading="lazy"
+                                                />
+                                            </t>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <t t-foreach="grid['matrix']" t-as="section">
+                                <tbody>
+                                    <t t-foreach="section['rows']" t-as="row">
+                                        <tr>
+                                            <t t-foreach="row" t-as="cell">
+                                                <t t-if="cell.get('name')">
+                                                    <td class="text-left fw-bold">
+                                                        <div>
+                                                            <strong t-esc="cell['name']"/>
+                                                        </div>
+                                                    </td>
+                                                </t>
+                                                <t t-elif="cell.get('is_possible_combination')">
+                                                    <td class="text-center align-middle">
+                                                        <div class=" js_main_product"
+                                                             t-att-data-variant-id="cell['variant_id']">
+                                                            <t t-if="cell.get('is_not_visible')">
+                                                                <span class="text-danger fw-bold">Not available</span>
+                                                            </t>
+                                                            <t t-else="cell.get('is_not_visible')">
+                                                                <t t-if="cell['free_qty'] &gt; 0 or product.allow_out_of_stock_order">
+                                                                    <div id="o_wsale_cta_wrapper"
+                                                                         class="js_matrix_inputs input-group mt-2">
+                                                                        <ul class="d-none"
+                                                                            t-att-data-attribute_exclusions="json.dumps(attribute_exclusions)"/>
+                                                                        <input type="hidden" class="product_template_id"
+                                                                               t-att-value="product.id"/>
+                                                                        <!--                                                        <input type="hidden" class="product_id"-->
+                                                                        <!--                                                               t-att-value="cell['variant_id']"/>-->
+                                                                        <input type="hidden" name="add_qty"
+                                                                               class="d-none"
+                                                                               t-attf-value="{{cell['qty']}}"/>
+                                                                        <div class="o_attribute_inputs">
+                                                                            <t t-foreach="cell['ptav_ids']"
+                                                                               t-as="ptav_id">
+                                                                                <input type="radio"
+                                                                                       class="js_variant_change d-none"
+                                                                                       t-att-value="ptav_id"/>
+                                                                            </t>
+                                                                        </div>
+                                                                        <div class="css_quantity input-group justify-content-end h-100 border">
+                                                                            <!-- MINUS -->
+                                                                            <a href="#"
+                                                                               class="css_quantity_minus btn btn-link pe-2 border-0 js_matrix_qty_minus"
+                                                                               aria-label="Remove one"
+                                                                               title="Remove one">
+                                                                                <i class="oi oi-minus text-600"/>
+                                                                            </a>
+                                                                            <input
+                                                                                    type="text"
+                                                                                    class="js_matrix_input variant_qty_input js_quantity form-control text-center"
+                                                                                    t-attf-value="{{int(cell['qty'])}}"
+                                                                                    min="0"
+                                                                                    t-att-max="cell['free_qty'] if cell['free_qty'] else ''"
+                                                                                    t-att-data-product-tmpl-id="cell['product_id']"
+                                                                                    t-att-data-product-id="cell['variant_id']"
+                                                                                    t-att-data-ptav-ids="cell['ptavs']"
+                                                                                    t-att-data-is_custom="cell['is_custom']"
+                                                                                    t-att-data-value_id="cell['value_id']"
+                                                                                    t-att-data-variant-id="cell['variant_id']"
+                                                                                    t-att-data-value_name="cell['value_name']"
+                                                                            />
+                                                                            <!-- PLUS -->
+                                                                            <a href="#"
+                                                                               class="css_quantity_plus btn btn-link ps-2 border-0 js_matrix_qty_plus"
+                                                                               aria-label="Add one"
+                                                                               title="Add one">
+                                                                                <i class="oi oi-plus text-600"/>
+                                                                            </a>
+                                                                        </div>
+                                                                        <!--                                                            <input type="number"-->
+                                                                        <!--                                                                   class="js_matrix_input variant_qty_input js_quantity w-100 form-control"-->
+                                                                        <!--                                                                   t-attf-value="{{int(cell['qty'])}}" min="0"-->
+                                                                        <!--                                                                   t-att-max="cell['free_qty'] if cell['free_qty'] else ''"-->
+                                                                        <!--                                                                   t-att-data-product-tmpl-id="cell['product_id']"-->
+                                                                        <!--                                                                   t-att-data-product-id="cell['variant_id']"-->
+                                                                        <!--                                                                   t-att-data-ptav-ids="cell['ptavs']"-->
+                                                                        <!--                                                                   t-att-data-is_custom="cell['is_custom']"-->
+                                                                        <!--                                                                   t-att-data-value_id="cell['value_id']"-->
+                                                                        <!--                                                                   t-att-data-variant-id="cell['variant_id']"-->
+                                                                        <!--                                                                   t-att-data-value_name="cell['value_name']"/>-->
+                                                                    </div>
+                                                                    <div>
+                                                                        <span class="oe_price badge text-bg-secondary"
+                                                                              t-esc="cell['price']"
+                                                                              t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                                    </div>
+                                                                </t>
+                                                                <div t-else="">
+                                                                    <span class="badge bg-warning text-dark">Out of
+                                                                        stock
+                                                                    </span>
+                                                                </div>
+                                                            </t>
+
+
+                                                        </div>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td class="text-center text-danger fw-semibold">X</td>
+                                                </t>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </t>
+                        </table>
+                    </t>
+
+
+                    <!-- Fallback for 2 attributes (default) -->
+                    <t t-else="">
+                        <table class="web_matrix table table-striped table-bordered oe_cart"
+                               style="width: max-content;">
+                            <thead>
+                                <tr>
+                                    <th t-foreach="grid['header']" t-as="column_header"
+                                        class="o_grid_title_header text-center">
+                                        <span t-esc="column_header['name']"/>
+                                        <div>
+                                            <!-- VARIANT IMAGE (first available in this row) -->
+                                            <t t-if="column_header['name'] != ''">
+                                                <img
+                                                        t-att-src="'/web/image/product.product/%s/image_1920' % column_header['variant_id']"
+                                                        class="rounded border"
+                                                        style="max-height: 70px; max-width: 70px; object-fit: contain;"
+                                                        loading="lazy"
+                                                />
+                                            </t>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="grid['matrix']" t-as="row">
+                                    <t t-foreach="row" t-as="cell">
+                                        <td t-if="cell.get('name', False)" class="text-left">
+                                            <div>
+                                                <strong t-esc="cell['name']"/>
+                                            </div>
+                                        </td>
+                                        <td t-else="" class="text-center attribute_matrix_td">
+                                            <t t-if="cell.get('is_not_visible')">
+                                                <span class="text-danger fw-bold">Not available</span>
+                                            </t>
+                                            <div t-elif="cell['is_possible_combination']" class=" js_main_product">
+                                                <t t-if="cell['free_qty'] &gt; 0">
+                                                    <div id="o_wsale_cta_wrapper "
+                                                         class="js_matrix_inputs input-group mt-2">
+                                                        <ul class="d-none"
+                                                            t-att-data-attribute_exclusions="json.dumps(attribute_exclusions)"/>
+                                                        <input type="hidden" class="product_template_id"
+                                                               t-att-value="product.id"/>
+                                                        <!--                                            <input type="hidden" class="product_id" t-att-value="cell['variant_id']"/>-->
+                                                        <input type="hidden" name="add_qty" class="d-none"
+                                                               t-attf-value="{{cell['qty']}}"/>
+                                                        <div class="o_attribute_inputs">
+                                                            <t t-foreach="cell['ptav_ids']" t-as="ptav_id">
+                                                                <input type="radio"
+                                                                       class="js_variant_change cursor-pointer d-none"
+                                                                       t-att-value="ptav_id"/>
+                                                            </t>
+                                                        </div>
+                                                        <div class="css_quantity input-group justify-content-end h-100 border">
+                                                            <!-- MINUS -->
+                                                            <a href="#"
+                                                               class="css_quantity_minus btn btn-link pe-2 border-0 js_matrix_qty_minus"
+                                                               aria-label="Remove one"
+                                                               title="Remove one">
+                                                                <i class="oi oi-minus text-600"/>
+                                                            </a>
+                                                            <input
+                                                                    type="text"
+                                                                    class="js_matrix_input variant_qty_input js_quantity form-control text-center"
+                                                                    t-attf-value="{{int(cell['qty'])}}" min="0"
+                                                                    t-att-max="cell['free_qty'] if cell['free_qty'] else ''"
+                                                                    t-att-data-product-tmpl-id="cell['product_id']"
+                                                                    t-att-data-product-id="cell['variant_id']"
+                                                                    t-att-data-ptav-ids="cell['ptavs']"
+                                                                    t-att-data-is_custom="cell['is_custom']"
+                                                                    t-att-data-value_id="cell['value_id']"
+                                                                    t-att-data-variant-id="cell['variant_id']"
+                                                                    t-att-data-value_name="cell['value_name']"
+                                                            />
+                                                            <!-- PLUS -->
+                                                            <a href="#"
+                                                               class="css_quantity_plus btn btn-link ps-2 border-0 js_matrix_qty_plus"
+                                                               aria-label="Add one"
+                                                               title="Add one">
+                                                                <i class="oi oi-plus text-600"/>
+                                                            </a>
+                                                        </div>
+                                                        <!--                                            <input type="number"-->
+                                                        <!--                                                   class="js_matrix_input variant_qty_input js_quantity w-100 form-control"-->
+                                                        <!--                                                   t-attf-value="{{int(cell['qty'])}}" min="0"-->
+                                                        <!--                                                   t-att-max="cell['free_qty'] if cell['free_qty'] else ''"-->
+                                                        <!--                                                   t-att-data-product-tmpl-id="cell['product_id']"-->
+                                                        <!--                                                   t-att-data-product-id="cell['variant_id']"-->
+                                                        <!--                                                   t-att-data-ptav-ids="cell['ptavs']"-->
+                                                        <!--                                                   t-att-data-is_custom="cell['is_custom']"-->
+                                                        <!--                                                   t-att-data-value_id="cell['value_id']"-->
+                                                        <!--                                                   t-att-data-variant-id="cell['variant_id']"-->
+                                                        <!--                                                   t-att-data-value_name="cell['value_name']"/>-->
+                                                    </div>
+                                                    <div>
+                                                        <span class="oe_price badge text-bg-secondary"
+                                                              t-esc="cell['price']"
+                                                              t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                                    </div>
+                                                </t>
+                                                <div t-else="">
+                                                    <span class="badge bg-warning text-dark">Out of stock</span>
+                                                </div>
+                                            </div>
+                                            <t t-else="">
+                                                <span class="text-danger">X</span>
+                                            </t>
+                                        </td>
+                                    </t>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                </div>
+                <div class="scrollbar-track-h">
+                    <div class="scrollbar-thumb-h" style="width: 129.45px; left: 0px;"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="cta_wrapper_ext" inherit_id="website_sale.cta_wrapper">
+        <xpath expr="//div[@id='add_to_cart_wrap']" position="attributes">
+            <attribute name="t-if">not (len(product.valid_product_template_attribute_line_ids) in [2, 3])</attribute>
+        </xpath>
+    </template>
+</odoo>
