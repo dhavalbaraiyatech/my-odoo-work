@@ -1,0 +1,12 @@
+.o-mail-Message-highlighted {
+    background-color: #FFFF00 !important;
+    border-radius: 4px;
+}
+
+.o-mail-Message-highlighted .o-mail-Message-body {
+    color: #333333;
+}
+
+.o-mail-Message-highlightActive {
+    color: #e6a817 !important;
+}
