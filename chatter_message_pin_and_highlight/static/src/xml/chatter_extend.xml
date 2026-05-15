@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<!--
+    Extend mail.Chatter to inject the PinnedMessagesPanel above the message thread.
+    We insert BEFORE <SearchMessageResult> so the t-if / t-else chain with <Thread> is preserved.
+-->
+<t t-name="mail.Chatter" t-inherit="mail.Chatter" t-inherit-mode="extension">
+    <xpath expr="//SearchMessageResult" position="before">
+        <PinnedMessagesPanel
+            t-if="state.thread"
+            thread="state.thread"
+        />
+    </xpath>
+</t>
+
+</templates>
+

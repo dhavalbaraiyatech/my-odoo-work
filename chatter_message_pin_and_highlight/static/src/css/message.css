@@ -1,0 +1,80 @@
+/* ── Pinned message highlight in the thread ─────────────────────────── */
+.o-mail-Message-highlighted {
+    background-color: #fff9c4 !important;
+    border-left: 3px solid #f6c90e !important;
+    border-radius: 4px;
+}
+
+/* Active pin action button in message toolbar */
+.o-PinnedAction-active {
+    color: #e6a817 !important;
+}
+
+/* ── Pinned Messages Panel ───────────────────────────────────────────── */
+.o-PinnedMessagesPanel {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin: 4px 8px 8px 8px;
+    background: #fafafa;
+    overflow: hidden;
+}
+
+.o-PinnedMessagesPanel-header {
+    font-size: 0.85rem;
+    color: #555;
+    padding: 4px 0;
+    user-select: none;
+}
+
+.o-PinnedMessagesPanel-header hr {
+    border-color: #ccc;
+}
+
+.o-PinnedMessagesPanel-list {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+/* Each pinned item row */
+.o-PinnedMessagesPanel-item {
+    background: #fff;
+    border-top: 1px solid #f0f0f0;
+    transition: background-color 0.15s ease;
+    min-height: 56px;
+}
+
+.o-PinnedMessagesPanel-item:first-child {
+    border-top: none;
+}
+
+.o-PinnedMessagesPanel-item:hover {
+    background-color: #f5f5f5;
+}
+
+.o-PinnedMessagesPanel-avatar img {
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.o-PinnedMessagesPanel-body {
+    color: #555;
+    word-break: break-word;
+}
+
+/* Jump button: hidden by default, revealed on row hover, top-right corner */
+.o-PinnedMessagesPanel-jumpBtn {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    top: 8px;
+    right: 8px;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+}
+
+.o-PinnedMessagesPanel-item:hover .o-PinnedMessagesPanel-jumpBtn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+

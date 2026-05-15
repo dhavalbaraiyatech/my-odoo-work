@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="chatter_message_pin_and_highlight.PinnedMessagesPanel">
+    <div t-if="pinnedMessages.length" class="o-PinnedMessagesPanel">
+
+        <!-- ── Collapsible section header ──────────────────────────── -->
+        <div class="o-PinnedMessagesPanel-header d-flex align-items-center cursor-pointer fw-bolder py-1"
+             t-on-click="() => this.toggle()">
+            <hr class="flex-grow-1 m-0"/>
+            <div class="d-flex align-items-center gap-1 px-3">
+                <i class="fa fa-fw" t-att-class="state.open ? 'fa-caret-down' : 'fa-caret-right'"/>
+                <span>Pinned Messages</span>
+            </div>
+            <hr class="flex-grow-1 m-0"/>
+        </div>
+
+        <!-- ── Message list ─────────────────────────────────────────── -->
+        <div t-if="state.open" class="o-PinnedMessagesPanel-list">
+            <t t-foreach="pinnedMessages" t-as="msg" t-key="msg.id">
+                <div class="o-PinnedMessagesPanel-item position-relative d-flex align-items-start gap-2 px-3 py-2">
+
+                    <!-- Avatar -->
+                    <div class="o-PinnedMessagesPanel-avatar flex-shrink-0">
+                        <img class="rounded"
+                             t-att-src="getAvatarUrl(msg)"
+                             t-att-alt="msg.author?.name or ''"
+                             width="36" height="36"/>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-grow-1 o-min-width-0">
+                        <!-- Header: name + pin icon + time -->
+                        <div class="d-flex align-items-center gap-1 mb-1">
+                            <strong class="small" t-esc="msg.author?.name or msg.email_from or 'Unknown'"/>
+                            <i class="fa fa-thumbtack small" style="color:#aaa;"/>
+                            <small class="text-muted" t-att-title="msg.datetimeShort">
+                                · <t t-esc="msg.dateSimple or msg.dateDay"/>
+                            </small>
+                        </div>
+                        <!-- Body preview -->
+                        <div class="o-PinnedMessagesPanel-body small" t-esc="getBodyText(msg.body)"/>
+                    </div>
+
+                    <!-- Jump button — revealed on item hover (top-right) -->
+                    <button class="o-PinnedMessagesPanel-jumpBtn btn btn-sm btn-secondary position-absolute"
+                            t-on-click.stop="() => this.jumpToMessage(msg)"
+                            title="Jump to message">
+                        Jump
+                    </button>
+                </div>
+            </t>
+        </div>
+    </div>
+</t>
+
+</templates>
+
