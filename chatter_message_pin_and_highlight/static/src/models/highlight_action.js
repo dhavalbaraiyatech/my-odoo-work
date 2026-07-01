@@ -3,7 +3,7 @@
 import {messageActionsRegistry} from "@mail/core/common/message_actions";
 import {_t} from "@web/core/l10n/translation";
 
-messageActionsRegistry.add("highlight-message", {
+messageActionsRegistry.add("highlight-message-pin", {
     condition: (component) => !!component.props.message.id,
     icon: (component) =>
         component.props.message.is_pinned

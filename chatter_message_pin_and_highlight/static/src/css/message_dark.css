@@ -1,0 +1,42 @@
+/* ── Dark mode overrides ─────────────────────────────────────────────── */
+
+/* Highlighted message: deep amber bg with warm yellow text */
+.o-mail-Message-highlighted {
+    background-color: #4a3800 !important;
+    border-left: 3px solid #f6c90e !important;
+    border-radius: 4px;
+    color: #f5e6a3 !important;
+}
+
+.o-mail-Message-highlighted * {
+    color: #f5e6a3 !important;
+}
+
+/* Pinned Messages Panel */
+.o-PinnedMessagesPanel {
+    border-color: #444;
+    background: #2a2a2a;
+}
+
+.o-PinnedMessagesPanel-header {
+    color: #aaa;
+}
+
+.o-PinnedMessagesPanel-header hr {
+    border-color: #444;
+}
+
+/* Each pinned item row */
+.o-PinnedMessagesPanel-item {
+    background: #2a2a2a;
+    border-top-color: #3a3a3a;
+}
+
+.o-PinnedMessagesPanel-item:hover {
+    background-color: #3a3a3a;
+}
+
+.o-PinnedMessagesPanel-body {
+    color: #ccc;
+}
+

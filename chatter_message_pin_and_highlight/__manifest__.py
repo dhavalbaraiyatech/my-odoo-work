@@ -9,6 +9,9 @@
     'depends': ['mail'],
     'data': [],
     'assets': {
+        'web.assets_web_dark': [
+            'chatter_message_pin_and_highlight/static/src/css/message_dark.css',
+        ],
         'web.assets_backend': [
             # Models / store patches
             'chatter_message_pin_and_highlight/static/src/models/message_model_patch.js',
