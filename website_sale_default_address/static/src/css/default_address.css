@@ -1,0 +1,20 @@
+/* ============================================================
+   Website Sale - Default Shipping Address
+   default_address.css
+   ============================================================ */
+
+/* ---------- "Default" badge on the address card ---------- */
+.o_wsda_default_badge {
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+}
+
+/* ---------- Set/remove default icon button (next to Edit) ---------- */
+.o_wsda_set_default,
+.o_wsda_remove_default {
+    line-height: 1;
+}
+
+.o_wsda_set_default:hover {
+    color: #198754;
+}

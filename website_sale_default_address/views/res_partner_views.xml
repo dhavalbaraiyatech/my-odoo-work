@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend res.partner form view to show/edit the default shipping field -->
+    <record id="view_partner_form_default_shipping" model="ir.ui.view">
+        <field name="name">res.partner.form.default.shipping</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!--
+                Add the "Default Shipping Address" checkbox in the address
+                type section, visible only when the contact type is delivery.
+            -->
+            <xpath expr="//field[@name='website']" position="after">
+                <field
+                    name="is_default_shipping_address"
+                    widget="boolean_toggle"
+                    invisible="type not in ('delivery', 'other', 'contact')"
+                    string="Default Shipping Address"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend res.partner list view inside contact's Addresses tab -->
+<!--    <record id="view_partner_child_list_default_shipping" model="ir.ui.view">-->
+<!--        <field name="name">res.partner.child.list.default.shipping</field>-->
+<!--        <field name="model">res.partner</field>-->
+<!--        <field name="inherit_id" ref="base.view_partner_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="//field[@name='child_ids']/tree//field[@name='type']" position="after">-->
+<!--                <field-->
+<!--                    name="is_default_shipping_address"-->
+<!--                    string="Default Shipping"-->
+<!--                    optional="show"-->
+<!--                />-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
+
+</odoo>

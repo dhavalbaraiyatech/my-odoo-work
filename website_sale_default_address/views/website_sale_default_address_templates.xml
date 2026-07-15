@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        In Odoo 19, every address card on /shop/checkout (both the delivery and
+        the billing lists) is rendered by the `website_sale.address_card`
+        template, itself a primary inherit of `portal.address_card`. Each card
+        already shows an "Edit" (pencil) icon and, when removable, a "Remove"
+        (trash) icon inside:
+            <div t-if="can_be_edited" class="d-flex gap-1 ...">
+                <a name="card_address_ref" class="js_edit_address p-2">...</a>
+                <a class="o_remove_address ...">...</a>
+            </div>
+        We add a "Default" badge next to the existing type badge, and a
+        star icon button right before the "Edit" link to toggle the default
+        shipping address. `address_type` ('delivery' or 'billing') is set by
+        the caller (`website_sale.delivery_address_list` / `billing_address_list`),
+        so we scope our additions to delivery addresses only.
+    -->
+    <template
+        id="website_sale_default_address_card"
+        name="Default Shipping Address - Address Card"
+        inherit_id="website_sale.address_card"
+    >
+        <!-- "Default" badge, stacked with the existing type badge -->
+<!--        <xpath expr="//div[@t-if='can_be_edited']" position="before">-->
+<!--            <span-->
+<!--                t-if="address_type == 'delivery' and contact.is_default_shipping_address"-->
+<!--                class="badge text-bg-success o_wsda_default_badge"-->
+<!--            >-->
+<!--                <i class="fa fa-star me-1"/>Default-->
+<!--            </span>-->
+<!--        </xpath>-->
+
+        <!-- "Set as default" / "Remove default" icon button, right before "Edit" -->
+        <xpath expr="//a[@name='card_address_ref']" position="before">
+            <t t-if="address_type == 'delivery'">
+                <button
+                    t-if="not contact.is_default_shipping_address"
+                    class="o_wsda_set_default p-2 badge badge-pill text-bg-info"
+                    role="button"
+                    href="#"
+                    t-att-data-partner-id="contact.id"
+                    title="Set as default shipping address"
+                    aria-label="Set as default shipping address"
+                >
+                    Set as default shipping address
+                </button>
+                <button
+                    t-else=""
+                    class="o_wsda_remove_default p-2 badge text-bg-success"
+                    role="button"
+                    href="#"
+                    t-att-data-partner-id="contact.id"
+                    title="Remove default shipping address"
+                    aria-label="Remove default shipping address"
+                >
+                    Default Shipping Address
+                </button>
+            </t>
+        </xpath>
+    </template>
+
+    <!--
+        /my/addresses (portal.my_addresses) renders its delivery/billing cards
+        through `portal.address_card` directly, NOT through `website_sale.address_card`
+        above (that one is a primary/independent copy used only by the shop checkout
+        flow), so the same button needs to be added here too to show up on that page.
+    -->
+    <template
+        id="portal_default_address_card"
+        name="Default Shipping Address - Portal Address Card"
+        inherit_id="portal.address_card"
+    >
+        <xpath expr="//a[@name='card_address_ref']" position="before">
+            <t t-if="address_type == 'delivery'">
+                <button
+                    t-if="not contact.is_default_shipping_address"
+                    class="o_wsda_set_default p-2 badge badge-pill text-bg-info"
+                    role="button"
+                    href="#"
+                    t-att-data-partner-id="contact.id"
+                    title="Set as default shipping address"
+                    aria-label="Set as default shipping address"
+                >
+                    Set as default shipping address
+                </button>
+                <button
+                    t-else=""
+                    class="o_wsda_remove_default p-2 badge text-bg-success"
+                    role="button"
+                    href="#"
+                    t-att-data-partner-id="contact.id"
+                    title="Remove default shipping address"
+                    aria-label="Remove default shipping address"
+                >
+                    Default Shipping Address
+                </button>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
