@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-name="product_stock_info.StockInfoPopoverButton">
+        <span class="o_stock_info_popover_btn"
+              t-att-title="title"
+              role="button"
+              tabindex="0"
+              t-on-click="onClick">
+            <i class="fa fa-info-circle text-primary" role="img" aria-label="Stock information"/>
+        </span>
+    </t>
+
+    <t t-name="product_stock_info.StockInfoPopoverContent">
+        <div class="o_stock_info_popover p-2">
+            <div t-if="state.loading" class="text-center p-2">
+                <i class="fa fa-spinner fa-spin" role="img" aria-label="Loading"/>
+            </div>
+            <div t-elif="state.error" class="text-muted small o_stock_info_popover_message">
+                <t t-esc="state.error"/>
+            </div>
+            <t t-else="">
+                <div t-if="!state.active" class="text-warning small mb-1">
+                    <i class="fa fa-exclamation-triangle me-1"/>Archived product
+                </div>
+                <table class="table table-sm mb-0 o_stock_info_popover_table">
+                    <tbody>
+                        <tr>
+                            <td class="text-muted pe-3">On Hand</td>
+                            <td class="text-end fw-bold">
+                                <t t-esc="state.qty_available"/> <t t-esc="state.uom_name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted pe-3">Forecasted</td>
+                            <td class="text-end fw-bold">
+                                <t t-esc="state.virtual_available"/> <t t-esc="state.uom_name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted pe-3">Free to Use</td>
+                            <td class="text-end fw-bold">
+                                <t t-esc="state.free_qty"/> <t t-esc="state.uom_name"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </t>
+        </div>
+    </t>
+
+</templates>

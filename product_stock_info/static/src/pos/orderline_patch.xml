@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-inherit="point_of_sale.Orderline" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('product-name')]" position="inside">
+            <!--
+                The whole orderline <li> uses pointerdown/pointerup (not click) to
+                detect tap vs. long-press for line selection, so propagation of
+                those two events must be stopped as well, not just "click".
+            -->
+            <span t-if="props.mode !== 'receipt'"
+                  class="ms-1"
+                  t-on-pointerdown.stop="() => {}"
+                  t-on-pointerup.stop="() => {}"
+                  t-on-click.stop="() => {}">
+                <StockInfoPopoverButton getData="() => this.getStockInfoData()"/>
+            </span>
+        </xpath>
+    </t>
+</templates>

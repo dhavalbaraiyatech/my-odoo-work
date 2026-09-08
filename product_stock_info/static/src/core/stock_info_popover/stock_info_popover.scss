@@ -1,0 +1,20 @@
+.o_stock_info_popover_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.75;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.o_stock_info_popover_table td {
+    padding: 2px 8px;
+}
+
+.o_stock_info_popover_message {
+    max-width: 220px;
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-inherit="point_of_sale.ProductCard" t-inherit-mode="extension">
+        <xpath expr="//article" position="inside">
+            <div class="position-absolute top-0 start-0 m-1 o_stock_info_popover_pos_anchor">
+                <StockInfoPopoverButton getData="() => this.getStockInfoData()"/>
+            </div>
+        </xpath>
+    </t>
+</templates>
